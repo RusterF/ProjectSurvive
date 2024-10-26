@@ -70,8 +70,11 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Using grenade: " + selectedItem.ItemData.itemName);
 
-            // Instantiate the grenade prefab
-            GameObject grenadeObject = Instantiate(selectedItem.ItemData.grenadePrefab, transform.position + transform.forward, Quaternion.identity);
+            // Get the placement position from the GrenadePlacement script
+            Vector3 placementPosition = GetComponent<GrenadePlacement>().GetPlacementPosition();
+
+            // Instantiate the grenade prefab at the placement position
+            GameObject grenadeObject = Instantiate(selectedItem.ItemData.grenadePrefab, placementPosition, Quaternion.identity);
 
             // Initialize grenade properties based on ItemData
             Grenade grenadeScript = grenadeObject.GetComponent<Grenade>();
@@ -80,26 +83,29 @@ public class Player : MonoBehaviour
                 grenadeScript.InitializeGrenade(selectedItem.ItemData.radius, selectedItem.ItemData.force, selectedItem.ItemData.explosionEffect);
             }
 
-            // Apply throw force to the grenade
-            Rigidbody rb = grenadeObject.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddForce(transform.forward * 50f);
-            }
-
+            // Remove one from the selected item's stack
             inventory.Remove(selectedItem.ItemData);
 
+            // Check if the selected item is now empty
             if (selectedItem.stackSize == 0)
             {
-                selectedItem = null;
                 Debug.Log("No grenades left in inventory.");
+                selectedItem = null; // Clear the selected item
+
+                // Hide the grenade preview immediately
+                GetComponent<GrenadePlacement>().HidePreview();
             }
         }
         else
         {
             Debug.Log("No grenade selected or out of stock.");
+
+            // Hide the grenade preview if no item is selected
+            GetComponent<GrenadePlacement>().HidePreview();
         }
     }
+
+
 
 
 
