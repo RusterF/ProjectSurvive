@@ -15,5 +15,7 @@ MonoBehaviour:
   itemName: PlasticBomb
   radius: 20
   force: 20
+  grenadePrefab: {fileID: 4170547039483267403, guid: eac9fdabc7c1fb545b0db52a7c195322, type: 3}
   explosionEffect: {fileID: 9111320563476075686, guid: c6fb71e58ec36784687d958bc39de3f2, type: 3}
+  previewPrefab: {fileID: 4170547039483267403, guid: 422deceae94d6564f8d197e316bdf058, type: 3}
   price: 200

@@ -15,6 +15,12 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("No Inventory component attached to the Player!");
         }
+
+        // Initialize selectedItem as the first item if available
+        if (inventory.inventory.Count > 0)
+        {
+            selectedItem = inventory.inventory[0];
+        }
     }
 
     public bool CanAfford(float price)
@@ -24,7 +30,6 @@ public class Player : MonoBehaviour
 
     public void BuyItem(ItemData itemData)
     {
-
         if (CanAfford(itemData.price))
         {
             money -= itemData.price;
@@ -37,44 +42,65 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Method to select the next grenade in the inventory
     public void SelectNextItem()
     {
         if (inventory.inventory.Count > 0)
         {
-            // Cycle through items
             int currentIndex = inventory.inventory.IndexOf(selectedItem);
             currentIndex = (currentIndex + 1) % inventory.inventory.Count;
             selectedItem = inventory.inventory[currentIndex];
 
             Debug.Log("Selected item: " + selectedItem.ItemData.itemName);
         }
-    }
-
-    // Method to use the selected grenade
-    public void UseSelectedItem()
-    {
-        if (selectedItem != null)
+        if (selectedItem != null && selectedItem.ItemData.itemName.Contains("Bom"))
         {
-            Debug.Log("Using grenade: " + selectedItem.ItemData.itemName);
-
-            // Assuming you have a Grenade prefab ready to instantiate
-            GameObject grenadePrefab = Instantiate(selectedItem.ItemData.explosionEffect, transform.position + transform.forward, Quaternion.identity);
-
-            // Apply any further grenade setup here (e.g., add force to throw it)
-            Rigidbody rb = grenadePrefab.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddForce(transform.forward * 50f);  // Example throw force
-            }
-
-            inventory.Remove(selectedItem.ItemData);  // Remove from inventory after use
+            // Assign the correct preview model for the selected grenade type
+            GetComponent<GrenadePlacement>().SetPreviewModel(selectedItem.ItemData.previewPrefab);
+            GetComponent<GrenadePlacement>().ShowPreview();
         }
         else
         {
-            Debug.Log("No grenade selected.");
+            GetComponent<GrenadePlacement>().HidePreview();
         }
     }
+
+    public void UseSelectedItem()
+    {
+        if (selectedItem != null && selectedItem.stackSize > 0)
+        {
+            Debug.Log("Using grenade: " + selectedItem.ItemData.itemName);
+
+            // Instantiate the grenade prefab
+            GameObject grenadeObject = Instantiate(selectedItem.ItemData.grenadePrefab, transform.position + transform.forward, Quaternion.identity);
+
+            // Initialize grenade properties based on ItemData
+            Grenade grenadeScript = grenadeObject.GetComponent<Grenade>();
+            if (grenadeScript != null)
+            {
+                grenadeScript.InitializeGrenade(selectedItem.ItemData.radius, selectedItem.ItemData.force, selectedItem.ItemData.explosionEffect);
+            }
+
+            // Apply throw force to the grenade
+            Rigidbody rb = grenadeObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(transform.forward * 50f);
+            }
+
+            inventory.Remove(selectedItem.ItemData);
+
+            if (selectedItem.stackSize == 0)
+            {
+                selectedItem = null;
+                Debug.Log("No grenades left in inventory.");
+            }
+        }
+        else
+        {
+            Debug.Log("No grenade selected or out of stock.");
+        }
+    }
+
 
 
     void Update()
@@ -89,4 +115,6 @@ public class Player : MonoBehaviour
             UseSelectedItem();
         }
     }
+
+
 }

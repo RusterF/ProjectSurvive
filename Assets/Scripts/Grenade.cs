@@ -4,25 +4,34 @@ using UnityEngine;
 
 public class Grenade : MonoBehaviour
 {
-    public ItemData itemData; // Reference to the item's data, populated when instantiated
+    public float radius = 5f;                   // Explosion radius
+    public float force = 5000f;                 // Explosion force
+    public GameObject explosionEffect;          // Explosion effect prefab
 
     private bool hasExploded = false;
+
+    // Initialize the grenade properties from ItemData
+    public void InitializeGrenade(float radius, float force, GameObject explosionEffectPrefab)
+    {
+        this.radius = radius;
+        this.force = force;
+        this.explosionEffect = explosionEffectPrefab;
+    }
 
     void Explode()
     {
         if (hasExploded) return; // Prevent multiple explosions
 
         // Instantiate explosion effect at grenade's position
-        if (itemData.explosionEffect != null)
+        if (explosionEffect != null)
         {
-            Instantiate(itemData.explosionEffect, transform.position, transform.rotation);
+            Instantiate(explosionEffect, transform.position, transform.rotation);
         }
 
         // Apply explosion effect to nearby objects
-        Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, itemData.radius);
+        Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, radius);
         foreach (Collider nearbyObject in collidersToDestroy)
         {
-            // Check if the object has a destructible component
             Destructible destructible = nearbyObject.GetComponent<Destructible>();
             if (destructible != null)
             {
@@ -31,13 +40,13 @@ public class Grenade : MonoBehaviour
         }
 
         // Apply explosion force to nearby objects with rigidbody
-        Collider[] collidersToMove = Physics.OverlapSphere(transform.position, itemData.radius);
+        Collider[] collidersToMove = Physics.OverlapSphere(transform.position, radius);
         foreach (Collider nearbyObject in collidersToMove)
         {
             Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddExplosionForce(itemData.force, transform.position, itemData.radius);
+                rb.AddExplosionForce(force, transform.position, radius);
             }
         }
 
@@ -45,12 +54,10 @@ public class Grenade : MonoBehaviour
         Destroy(gameObject); // Destroy grenade after explosion
     }
 
-    // Trigger explosion on collision
     void OnTriggerEnter(Collider other)
     {
         if (hasExploded) return;
 
-        // Prevent grenade from exploding on the ground immediately
         if (other.CompareTag("Ground")) return;
 
         Explode();

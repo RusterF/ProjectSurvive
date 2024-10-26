@@ -15,5 +15,7 @@ MonoBehaviour:
   itemName: MagneticBomb
   radius: 30
   force: 30
+  grenadePrefab: {fileID: 5809061905979300901, guid: d5da32c08f1aa6046b895b74c2e86632, type: 3}
   explosionEffect: {fileID: 3654741155788002110, guid: ac8053bb68b7997419467a34b74fb975, type: 3}
+  previewPrefab: {fileID: 5809061905979300901, guid: 4fba0d06e8d42bf469c62e5a25ade33f, type: 3}
   price: 300
