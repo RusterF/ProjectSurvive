@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
     {
         if (selectedItem != null && selectedItem.stackSize > 0)
         {
-            Debug.Log("Using grenade: " + selectedItem.ItemData.itemName);
+            Debug.Log("Using bomb: " + selectedItem.ItemData.itemName);
 
             // Get the placement position from the GrenadePlacement script
             Vector3 placementPosition = GetComponent<GrenadePlacement>().GetPlacementPosition();
@@ -77,10 +77,10 @@ public class Player : MonoBehaviour
             GameObject grenadeObject = Instantiate(selectedItem.ItemData.grenadePrefab, placementPosition, Quaternion.identity);
 
             // Initialize grenade properties based on ItemData
-            Grenade grenadeScript = grenadeObject.GetComponent<Grenade>();
-            if (grenadeScript != null)
+            BaseBomb bomb = grenadeObject.GetComponent<BaseBomb>();
+            if (bomb != null)
             {
-                grenadeScript.InitializeGrenade(selectedItem.ItemData.radius, selectedItem.ItemData.force, selectedItem.ItemData.explosionEffect);
+                bomb.InitializeBomb(selectedItem.ItemData.radius, selectedItem.ItemData.force, selectedItem.ItemData.explosionEffect);
             }
 
             // Remove one from the selected item's stack

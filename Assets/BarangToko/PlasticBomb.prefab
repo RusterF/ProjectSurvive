@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7602688012011293833}
   - component: {fileID: 1734534249539483884}
   - component: {fileID: 3624341886072501306}
+  - component: {fileID: 3673963480889909864}
   m_Layer: 0
   m_Name: PlasticBomb
   m_TagString: Untagged
@@ -149,3 +150,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3673963480889909864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170547039483267403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a1e00b5c47cc274f905d300d5dbe676, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 20
+  force: 5000
+  explosionEffect: {fileID: 3654741155788002110, guid: ac8053bb68b7997419467a34b74fb975, type: 3}
