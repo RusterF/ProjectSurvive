@@ -7,6 +7,7 @@ public class ZombieHealth : MonoBehaviour
 {
     public int currentHealth;
     public int zombieMoney;
+    public Action onDeath;
 
     void Start()
     {
@@ -28,8 +29,7 @@ public class ZombieHealth : MonoBehaviour
 
     public void StartDeath()
     {
-        // Start animasi mati
-
+        onDeath();
         StartCoroutine(DestroyDelay());
         
     }
