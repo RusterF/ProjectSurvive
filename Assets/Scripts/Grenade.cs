@@ -4,62 +4,33 @@ using UnityEngine;
 
 public class Grenade : MonoBehaviour
 {
-    public float radius = 5f;                   // Explosion radius
-    public float force = 5000f;                 // Explosion force
-    public GameObject explosionEffect;          // Explosion effect prefab
+    private BaseBomb mBomb;
 
-    private bool hasExploded = false;
-
-    // Initialize the grenade properties from ItemData
-    public void InitializeGrenade(float radius, float force, GameObject explosionEffectPrefab)
+    private void Start()
     {
-        this.radius = radius;
-        this.force = force;
-        this.explosionEffect = explosionEffectPrefab;
+        mBomb = GetComponent<BaseBomb>();
+        mBomb.onExplode += onExplode;
     }
 
-    void Explode()
+
+    private void onExplode(Collider[] colliders)
     {
-        if (hasExploded) return; // Prevent multiple explosions
-
-        // Instantiate explosion effect at grenade's position
-        if (explosionEffect != null)
-        {
-            Instantiate(explosionEffect, transform.position, transform.rotation);
-        }
-
-        // Apply explosion effect to nearby objects
-        Collider[] collidersToDestroy = Physics.OverlapSphere(transform.position, radius);
-        foreach (Collider nearbyObject in collidersToDestroy)
+        foreach (Collider nearbyObject in colliders)
         {
             Destructible destructible = nearbyObject.GetComponent<Destructible>();
             if (destructible != null)
             {
                 destructible.Destroy();
             }
-        }
 
-        // Apply explosion force to nearby objects with rigidbody
-        Collider[] collidersToMove = Physics.OverlapSphere(transform.position, radius);
-        foreach (Collider nearbyObject in collidersToMove)
-        {
-            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
-            if (rb != null)
+            ZombieHealth zombieHealth;
+
+            nearbyObject.TryGetComponent<ZombieHealth>(out zombieHealth);
+
+            if (zombieHealth != null)
             {
-                rb.AddExplosionForce(force, transform.position, radius);
+                zombieHealth.DecreaseHealth(300);
             }
         }
-
-        hasExploded = true;
-        Destroy(gameObject); // Destroy grenade after explosion
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (hasExploded) return;
-
-        if (other.CompareTag("Ground")) return;
-
-        Explode();
     }
 }
