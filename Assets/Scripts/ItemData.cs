@@ -11,5 +11,6 @@ public class ItemData : ScriptableObject
     public GameObject grenadePrefab; // Reference to the actual grenade prefab
     public GameObject explosionEffect; // Separate explosion effect
     public GameObject previewPrefab; // Add this field for the preview model
+    public Sprite icon; // Add this line for the bomb icon
     public float price;
 }
